@@ -6,7 +6,7 @@
 #include "DMA++.h"
 #include "MACD.h"
 #include "RSI.h"
-// #include "ADX.h"
+#include "ADX.h"
 
 using namespace std;
 
@@ -25,6 +25,8 @@ int main(int argc, char *argv[]) {
     ofstream orderStatisticsFile(orderStatisticsFilePath);
     ofstream finalPNLFile(finalPNLFilePath);
 
+    cashflowFile << "Date" << "," << "Cashflow" << "\n";
+    orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
     string command = argv[1];
 
     if (command == "BASIC") {
@@ -120,8 +122,7 @@ int main(int argc, char *argv[]) {
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
-
-        // ADXStrtegy(inputData, date_pos, x, n, adx_threshold, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
+        ADXStrategy(inputData, date_pos, x, n, adx_threshold, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
 
     } else {
         cerr << "Invalid command: " << command << endl;
