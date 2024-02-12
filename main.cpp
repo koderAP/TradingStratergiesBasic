@@ -7,26 +7,13 @@
 #include "MACD.h"
 #include "RSI.h"
 #include "ADX.h"
+#include "Pairs.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
     
     
-    string binaryFilePath = "SBIN.bin";
-    string cashflowFilePath = "daily_cashflow.csv";
-    string orderStatisticsFilePath = "order_statistics.csv";
-    string finalPNLFilePath = "final_pnl.txt";
-
-    vector<Record> inputData = readBinary(binaryFilePath);
-
-    vector<Order> orderStatistics;
-    ofstream cashflowFile(cashflowFilePath);
-    ofstream orderStatisticsFile(orderStatisticsFilePath);
-    ofstream finalPNLFile(finalPNLFilePath);
-
-    cashflowFile << "Date" << "," << "Cashflow" << "\n";
-    orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
     string command = argv[1];
 
     if (command == "BASIC") {
@@ -37,11 +24,30 @@ int main(int argc, char *argv[]) {
         string start_date = argv[5];
         string end_date = argv[6];
 
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
 
         basicStrategy(inputData, date_pos, n, x, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
+
+        cashflowFile.close();
+        orderStatisticsFile.close();
+        finalPNLFile.close();
 
     } else if (command == "DMA") {
         cout << "Executing DMA strategy" << endl;
@@ -53,11 +59,30 @@ int main(int argc, char *argv[]) {
         string start_date = argv[6];
         string end_date = argv[7];
 
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
 
         DMAStrategy(inputData, date_pos, n, x, p, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
+
+        cashflowFile.close();
+        orderStatisticsFile.close();
+        finalPNLFile.close();
 
     } else if (command == "DMA++") {
         cout << "Executing DMA++ strategy" << endl;
@@ -72,11 +97,30 @@ int main(int argc, char *argv[]) {
         string start_date = argv[9];
         string end_date = argv[10];
 
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
 
         DMAPlusPlusStrategy(inputData, date_pos, x, p, n, max_hold_days, c1, c2, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
+
+        cashflowFile.close();
+        orderStatisticsFile.close();
+        finalPNLFile.close();
 
     } else if (command == "MACD") {
         cout << "Executing MACD strategy" << endl;
@@ -86,11 +130,30 @@ int main(int argc, char *argv[]) {
         string start_date = argv[4];
         string end_date = argv[5];
 
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
 
         // MACDStrategy(inputData, date_pos, x, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
+
+        cashflowFile.close();
+        orderStatisticsFile.close();
+        finalPNLFile.close();
 
     } else if (command == "RSI") {
         cout << "Executing RSI strategy" << endl;
@@ -103,11 +166,30 @@ int main(int argc, char *argv[]) {
         string start_date = argv[7];
         string end_date = argv[8];
 
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
 
         RSIStrategy(inputData, date_pos, x, n, oversoldThreshold, overboughtThreshold, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
+
+        cashflowFile.close();
+        orderStatisticsFile.close();
+        finalPNLFile.close();
 
     } else if (command == "ADX") {
         cout << "Executing ADX strategy" << endl;
@@ -119,19 +201,78 @@ int main(int argc, char *argv[]) {
         string start_date = argv[6];
         string end_date = argv[7];
 
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
         int startDateInt = converet_to_int(start_date);
 
         int date_pos = pos_start(inputData, startDateInt);
         ADXStrategy(inputData, date_pos, x, n, adx_threshold, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile);
 
+        cashflowFile.close();
+        orderStatisticsFile.close();
+        finalPNLFile.close();
+
+    } else if (command == "PAIRS") {
+        cout << "Executing Pairs strategy" << endl;
+
+        string symbol1 = argv[2];
+        string symbol2 = argv[3];
+        int x = stoi(argv[4]);
+        int n = stoi(argv[5]);
+        int threshold = stoi(argv[6]);
+        string start_date = argv[7];
+        string end_date = argv[8];
+
+        string binaryFilePath1 = symbol1 + ".bin";
+        string binaryFilePath2 = symbol2 + ".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath1 = "order_statistics1.csv";
+        string orderStatisticsFilePath2 = "order_statistics2.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData1 = readBinary(binaryFilePath1);
+        vector<Record> inputData2 = readBinary(binaryFilePath2);
+
+        vector<Order> orderStatistics1;
+        vector<Order> orderStatistics2;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile1(orderStatisticsFilePath1);
+        ofstream orderStatisticsFile2(orderStatisticsFilePath2);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile1 << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+        orderStatisticsFile2 << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
+        int startDateInt = converet_to_int(start_date);
+
+        int date_pos1 = pos_start(inputData1, startDateInt);
+        int date_pos2 = pos_start(inputData2, startDateInt);
+
+        PairsStrategy(inputData1, inputData2, date_pos1, x, n, threshold, orderStatistics1, orderStatistics2, cashflowFile, orderStatisticsFile1, orderStatisticsFile2, finalPNLFile);
+
+        cashflowFile.close();
+        orderStatisticsFile1.close();
+        orderStatisticsFile2.close();
+        finalPNLFile.close();
+
     } else {
         cerr << "Invalid command: " << command << endl;
         return 1;
     }
-
-    cashflowFile.close();
-    orderStatisticsFile.close();
-    finalPNLFile.close();
 
     return 0;
 }
