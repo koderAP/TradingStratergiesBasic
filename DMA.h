@@ -16,7 +16,6 @@ void DMAStrategy(const vector<Record>& data, int start, int n, double x, double 
         sumSquare += data[i].price * data[i].price;
     }
 
-    string prev = "wh";
     for (size_t i = start; i < data.size(); ++i) {
         double closePrice = data[i].price;
 
@@ -29,26 +28,29 @@ void DMAStrategy(const vector<Record>& data, int start, int n, double x, double 
         sumSquare -= data[i - n].price * data[i - n].price;
 
         double sd = sqrt((sumSquare / n) - dma * dma);
-
-        if (orderStatistics.size() != 0){
-            prev = orderStatistics.back().direction;
-        }
+        
         if (closePrice > (dma + p * sd) && position < x) {
             orderStatistics.push_back({date, "BUY", 1, closePrice});
             cashInHand -= closePrice;  
             position += 1;  
+            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         } else if (closePrice < (dma - p * sd) && position > -x) {
             orderStatistics.push_back({date, "SELL", 1, closePrice});
             cashInHand += closePrice; 
             position -= 1;
+            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         }
 
         cashflowFile << date << "," << cashInHand << "\n";
-        if ((orderStatistics.size() != 0) && (orderStatistics.back().direction != prev)) {
-            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
-        }   
 
     }
 
-    finalPNLFile << "Final PNL: " << cashInHand << "\n";
+    if (position != 0) {
+        double finalPrice = data.back().price;
+        double pnl = position * finalPrice;
+        pnl += cashInHand;
+        finalPNLFile << pnl;
+    } else {
+        finalPNLFile << 0.0;
+    }
 }
