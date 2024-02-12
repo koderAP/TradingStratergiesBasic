@@ -1,5 +1,7 @@
 .PHONY: all
 PYTHON_SCRIPT = main.py
+PYTHON_SCRIPT1 = main1.py
+
 
 all: check_args 
 
@@ -29,5 +31,9 @@ else ifeq ($(strategy), ADX)
 	@python3 $(PYTHON_SCRIPT) symbol=$(symbol) x=$(x) n=$(n) adx_threshold=$(adx_threshold) start_date=$(start_date) end_date=$(end_date)
 	@g++ -o test main.cpp
 	@./test ADX $(symbol) $(x) $(n) $(adx_threshold) $(start_date) $(end_date)
+else ifeq ($(strategy), PAIRS)
+	@python3 $(PYTHON_SCRIPT1) symbol1=$(symbol1) symbol2=$(symbol2) x=$(x) n=$(n) threshold=$(adx_threshold) start_date=$(start_date) end_date=$(end_date)
+	@g++ -o test main.cpp
+	@./test PAIRS $(symbol1) $(symbol2) $(x) $(n) $(threshold) $(start_date) $(end_date)
 endif
 endif
