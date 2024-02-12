@@ -18,8 +18,9 @@ def get_stock_data(symbol, start_date, end_date, additional_days):
 def write_to_binary(data, symbol):
     binary_file_name = f"{symbol}.bin"
     
-    data_sorted = data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
+    grouped_data = data.groupby('DATE').agg({'CLOSE': 'mean', 'HIGH': 'mean', 'LOW': 'mean'}).reset_index()
 
+    data_sorted = grouped_data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
     data_sorted['DATE'] = pd.to_datetime(data_sorted['DATE'], format='%d/%m/%Y').dt.strftime('%Y%m%d').astype(int)  
     data_sorted['CLOSE'] = data_sorted['CLOSE'].astype(np.float64)  # Convert 'CLOSE' column to float64
     data_sorted['HIGH'] = data_sorted['HIGH'].astype(np.float64)  # Convert 'HIGH' column to float64
