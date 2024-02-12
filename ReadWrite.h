@@ -2,6 +2,8 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <algorithm>
+#include <iomanip>
 using namespace std;
 
 struct Order {
@@ -29,23 +31,20 @@ int converet_to_int(string date){
     return startDateInt;
 }
 
-string convert_to_date(Record a){
-    int day = a.date % 100;
-    int month = (a.date % 10000) / 100;
+string convert_to_date(const Record& a) {
     int year = a.date / 10000;
+    int month = (a.date / 100) % 100;
+    int day = a.date % 100;
 
-    string d = to_string(day);
-    if (d.size() == 1){
-        d = "0" + d;
-    }
-    string m = to_string(month);
-    if (m.size() == 1){
-        m = "0" + m;
-    }
+    ostringstream oss;
 
-    string date = d + "/" + m + "/" + to_string(year);
-    return date;
+    oss << setfill('0') << setw(2) << day << "/"
+                    << setfill('0') << setw(2) << month << "/"
+                    << year;
+
+    return oss.str();
 }
+
 
 int pos_start(const vector<Record>& data, int start_date){
     for(int i = 0; i < data.size(); ++i){
