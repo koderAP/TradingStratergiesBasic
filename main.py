@@ -18,14 +18,14 @@ def get_stock_data(symbol, start_date, end_date, additional_days):
 def write_to_binary(data, symbol):
     binary_file_name = f"{symbol}.bin"
     
-    data_reversed = data.iloc[::-1]
+    data_sorted = data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
+
+    data_sorted['DATE'] = pd.to_datetime(data_sorted['DATE'], format='%d/%m/%Y').dt.strftime('%Y%m%d').astype(int)  
+    data_sorted['CLOSE'] = data_sorted['CLOSE'].astype(np.float64)  # Convert 'CLOSE' column to float64
+    data_sorted['HIGH'] = data_sorted['HIGH'].astype(np.float64)  # Convert 'HIGH' column to float64
+    data_sorted['LOW'] = data_sorted['LOW'].astype(np.float64)  # Convert 'LOW' column to float64
     
-    data_reversed['DATE'] = pd.to_datetime(data_reversed['DATE'], format='%d/%m/%Y').dt.strftime('%Y%m%d').astype(int)  
-    data_reversed['CLOSE'] = data_reversed['CLOSE'].astype(np.float64)  # Convert 'CLOSE' column to float64
-    data_reversed['HIGH'] = data_reversed['HIGH'].astype(np.float64)  # Convert 'HIGH' column to float64
-    data_reversed['LOW'] = data_reversed['LOW'].astype(np.float64)  # Convert 'LOW' column to float64
-    
-    np_data = data_reversed.to_records(index=False)
+    np_data = data_sorted.to_records(index=False)
     with open(binary_file_name, 'wb') as binary_file:
         for record in np_data:
             binary_file.write(record[0].tobytes())  # Write date as int
@@ -33,24 +33,18 @@ def write_to_binary(data, symbol):
             binary_file.write(record[2].tobytes())  # Write high price as binary
             binary_file.write(record[3].tobytes())  # Write low price as binary
 
-    return
-
-
-
+def write_to_csv(data, symbol):
+    data = data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
+    csv_file_name = f"{symbol}.csv"
+    data.to_csv(csv_file_name, index=False)
 
 args = {}
-for arg in sys.argv[1:]:
-    if '=' in arg:
-        try:
-            key, value = arg.split('=')
-            args[key] = value
-        except ValueError:
-            print(f"Invalid argument format: {arg}")
-    else:
-        print(f"Invalid argument format: {arg}")
+for key, value in os.environ.items():
+    if key in ['symbol', 'n', 'start_date', 'end_date']:
+        args[key] = value
 
+# Check if all required arguments are present
 required_args = ['symbol', 'n', 'start_date', 'end_date']
-
 if all(arg in args for arg in required_args):
     symbol = args['symbol']
     start_date = args['start_date']
@@ -59,9 +53,7 @@ if all(arg in args for arg in required_args):
 else:
     print("Error: Missing required arguments.")
 
-
-
 data = get_stock_data(symbol, start_date, end_date, 100*additional_days)
 
 write_to_binary(data, symbol)
-
+# write_to_csv(data, symbol)
