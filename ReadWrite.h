@@ -30,11 +30,20 @@ int converet_to_int(string date){
 }
 
 string convert_to_date(Record a){
-    int day = a.date / 1000000;
-    int month = (a.date / 10000) % 100;
-    int year = a.date % 10000;
+    int day = a.date % 100;
+    int month = (a.date % 10000) / 100;
+    int year = a.date / 10000;
 
-    string date = to_string(day) + "/" + to_string(month) + "/" + to_string(year);
+    string d = to_string(day);
+    if (d.size() == 1){
+        d = "0" + d;
+    }
+    string m = to_string(month);
+    if (m.size() == 1){
+        m = "0" + m;
+    }
+
+    string date = d + "/" + m + "/" + to_string(year);
     return date;
 }
 
