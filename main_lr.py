@@ -6,22 +6,18 @@ import sys
 import pandas as pd
 import numpy as np
 
-def get_stock_data(symbol1, symbol2, start_date, end_date, additional_days):
+def get_stock_data(symbol, start_date, end_date, additional_days):
     end_date = datetime.strptime(end_date, '%d/%m/%Y')
     start_date_with_additional = (datetime.strptime(start_date, '%d/%m/%Y') - timedelta(days=additional_days))
+    print(f"Fetching data for {symbol} from {start_date_with_additional} to {end_date}")
     columns_to_remove = ['PREV. CLOSE', 'SERIES', '52W H', 'SYMBOL', '52W L']
-    df1 = stock_df(symbol=symbol1, from_date=start_date_with_additional, to_date=end_date, series="EQ")
-    df1 = df1.drop(columns=columns_to_remove)
-    df1 = df1[['DATE','CLOSE','HIGH','LOW', 'OPEN', 'VWAP', 'NO OF TRADES']]
-
-    df2 = stock_df(symbol=symbol2, from_date=start_date_with_additional, to_date=end_date, series="EQ")
-    df2 = df2.drop(columns=columns_to_remove)
-    df2 = df2[['DATE','CLOSE','HIGH','LOW', 'OPEN', 'VWAP', 'NO OF TRADES']]
-
-    return df1, df2
+    df = stock_df(symbol=symbol, from_date=start_date_with_additional, to_date=end_date, series="EQ")
+    df = df.drop(columns=columns_to_remove)
+    df = df[['DATE','CLOSE','HIGH','LOW', 'OPEN', 'VWAP', 'NO OF TRADES']]
+    return df
 
 def write_to_binary(data, symbol):
-    binary_file_name = f"{symbol}.bin"
+    binary_file_name = f"{symbol}_train.bin"
     
     data_sorted = data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
 
@@ -43,37 +39,28 @@ def write_to_binary(data, symbol):
             binary_file.write(record[4].tobytes())  # Write open price as binary
             binary_file.write(record[5].tobytes())  # Write vwap price as binary
             binary_file.write(record[6].tobytes())  # Write no of trades as binary
+            
+
 
 def write_to_csv(data, symbol):
-    grouped_data = data.groupby('DATE').agg({'CLOSE': 'mean', 'HIGH': 'mean', 'LOW': 'mean'}).reset_index()
-
-    sorted_data = grouped_data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
-
+    data = data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
     csv_file_name = f"{symbol}.csv"
-    sorted_data.to_csv(csv_file_name, index=False)
-
+    data.to_csv(csv_file_name, index=False)
 
 args = {}
 for key, value in os.environ.items():
-    if key in ['symbol1', 'symbol2', 'n', 'start_date', 'end_date']:
+    if key in ['symbol', 'n', 'train_start_date', 'train_end_date']:
         args[key] = value
 
 # Check if all required arguments are present
-required_args = ['symbol1', 'symbol2', 'n', 'start_date', 'end_date']
+required_args = ['symbol', 'n', 'train_start_date', 'train_end_date']
+symbol = args['symbol']
+start_date = args['train_start_date']
+end_date = args['train_end_date']
+additional_days = int(args['n'])
+print(f"Fetching data for {symbol} from {start_date} to {end_date} with {additional_days} additional days")
 
-if all(arg in args for arg in required_args):
-    symbol1 = args['symbol1']
-    symbol2 = args['symbol2']
-    start_date = args['start_date']
-    end_date = args['end_date']
-    additional_days = int(args['n'])
-else:
-    print("Error: Missing required arguments.")
+data = get_stock_data(symbol, start_date, end_date, 100*additional_days)
 
-data1, data2 = get_stock_data(symbol1, symbol2, start_date, end_date, 10 + additional_days)
-
-write_to_binary(data1, symbol1)
-# write_to_csv(data1, symbol1)
-
-write_to_binary(data2, symbol2)
-# write_to_csv(data2, symbol2)
+write_to_binary(data, symbol)
+# write_to_csv(data, symbol)

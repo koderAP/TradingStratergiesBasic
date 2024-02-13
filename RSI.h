@@ -25,7 +25,6 @@ void RSIStrategy(const vector<Record>& data, int start, double x, int n, double 
 
         double RS = avgGain / avgLoss;
         double RSI = 100.0 - 100.0 / (1.0 + RS);
-
         string date = convert_to_date(data[i]);
 
         if (RSI < oversoldThreshold && position < x) {
@@ -39,7 +38,7 @@ void RSIStrategy(const vector<Record>& data, int start, double x, int n, double 
             position -= 1;
             orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         }
-        cashflowFile << date << "," << cashInHand << "\n";
+        cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
 
     }
 
@@ -47,7 +46,7 @@ void RSIStrategy(const vector<Record>& data, int start, double x, int n, double 
         double finalPrice = data.back().price;
         double pnl = position * finalPrice;
         pnl += cashInHand;
-        finalPNLFile << pnl;
+        finalPNLFile << fixed << setprecision(2) << pnl;
     } else {
         finalPNLFile << 0.0;
     }

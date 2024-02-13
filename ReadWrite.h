@@ -18,6 +18,9 @@ struct Record {
     double price; 
     double high;
     double low;
+    double open;
+    double vwap;
+    double numtrade;
 };
 
 int converet_to_int(string date){
@@ -48,7 +51,7 @@ string convert_to_date(const Record& a) {
 
 int pos_start(const vector<Record>& data, int start_date){
     for(int i = 0; i < data.size(); ++i){
-        if (data[i].date > start_date){
+        if (data[i].date >= start_date){
             return i;
         }
     }
