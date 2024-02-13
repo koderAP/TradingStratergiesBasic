@@ -1,5 +1,22 @@
 # Algorithmic Trading Strategies
 
+## Index
+1. [Background](#background)
+2. [Constraints and Assumptions](#constraints-and-assumptions)
+3. [Momentum Based Strategies](#momentum-based-strategies)
+    1. [Basic Strategy](#basic-strategy)
+    2. [Trend-based Strategy (DMA)](#trend-based-strategy-dma)
+    3. [Improving DMA](#improving-dma)
+    4. [Using Indicators](#using-indicators)
+        - [Moving Average Convergence Divergence (MACD)](#moving-average-convergence-divergence-macd)
+        - [Relative Strength Index (RSI)](#relative-strength-index-rsi)
+        - [Average Directional Index (ADX)](#average-directional-index-adx)
+4. [Linear Regression Strategy](#linear-regression-strategy)
+5. [Best of All Strategy](#best-of-all-strategy)
+6. [Mean-Reverting Pairs Trading Strategy](#mean-reverting-pairs-trading-strategy)
+    - [Stop-Loss in Pairs Trading Strategy](#stop-loss-in-pairs-trading-strategy)
+7. [Report and insights](#algorithmic-trading-strategies-report)
+
 ## Background
 
 Before diving into our implementation of trading strategies, let's familiarize ourselves with some key concepts used:
