@@ -327,7 +327,7 @@ void LinearRegressionStrategy(string symbol, vector<Record> inputDatatrain, cons
     double pnl = position * finalPrice;
     pnl += cashInHand;
     cout<<position<<" "<<finalPrice<<" "<<cashInHand<<endl;
-    finalPNLFile << pnl;
+    finalPNLFile << fixed << setprecision(2) << pnl;
 
 
 

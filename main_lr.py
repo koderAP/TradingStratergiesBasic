@@ -39,9 +39,6 @@ def write_to_binary(data, symbol):
             binary_file.write(record[4].tobytes())  # Write open price as binary
             binary_file.write(record[5].tobytes())  # Write vwap price as binary
             binary_file.write(record[6].tobytes())  # Write no of trades as binary
-            
-
-
 def write_to_csv(data, symbol):
     data = data.sort_values(by='DATE', ascending=True).reset_index(drop=True)
     csv_file_name = f"{symbol}.csv"
@@ -53,14 +50,16 @@ for key, value in os.environ.items():
         args[key] = value
 
 # Check if all required arguments are present
-required_args = ['symbol', 'n', 'train_start_date', 'train_end_date']
-symbol = args['symbol']
-start_date = args['train_start_date']
-end_date = args['train_end_date']
-additional_days = int(args['n'])
-print(f"Fetching data for {symbol} from {start_date} to {end_date} with {additional_days} additional days")
+required_args = ['symbol', 'train_start_date', 'train_end_date']
+if all(arg in args for arg in required_args):
+    symbol = args['symbol']
+    start_date = args['train_start_date']
+    end_date = args['train_end_date']
+    additional_days = int(args.get('n', 10)) 
+else:
+    print("Error: Missing required arguments.")
 
-data = get_stock_data(symbol, start_date, end_date, 100*additional_days)
+data = get_stock_data(symbol, start_date, end_date, 10*additional_days)
 
 write_to_binary(data, symbol)
 # write_to_csv(data, symbol)
