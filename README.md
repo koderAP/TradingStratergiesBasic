@@ -26,9 +26,11 @@ Throughout this assignment, we make the following assumptions:
 - `n`: Number of past days to consider.
 - `x`: Maximum position allowed.
 
-#### Implementation
+#### Implementation:
 
- ` make strategy=BASIC symbol=SBIN n=5 x=2 start_date="b" end_date="a" `
+ ``` 
+ make strategy=BASIC symbol=SBIN n=5 x=2 start_date="b" end_date="a" 
+ ```
 
 
 ### 1.2 Trend-based Strategy (n-Day Moving Average - DMA)
