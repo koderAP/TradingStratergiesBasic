@@ -41,7 +41,7 @@ void DMAStrategy(const vector<Record>& data, int start, int n, double x, double 
             orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         }
 
-        cashflowFile << date << "," << cashInHand << "\n";
+        cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
 
     }
 
@@ -49,7 +49,7 @@ void DMAStrategy(const vector<Record>& data, int start, int n, double x, double 
         double finalPrice = data.back().price;
         double pnl = position * finalPrice;
         pnl += cashInHand;
-        finalPNLFile << pnl;
+        finalPNLFile << fixed << setprecision(2) << pnl;
     } else {
         finalPNLFile << 0.0;
     }

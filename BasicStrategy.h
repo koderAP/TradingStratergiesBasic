@@ -45,14 +45,14 @@ void basicStrategy(const vector<Record>& data, int start,  int n, int x, vector<
         }
 
         // Write cash flow for the day
-        cashflowFile << date << "," << cashInHand << "\n";
+        cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
     }
 
     if (position != 0) {
         double finalPrice = data.back().price;
         double pnl = position * finalPrice;
         pnl += cashInHand;
-        finalPNLFile << pnl;
+        finalPNLFile << fixed << setprecision(2) << pnl;
     } else {
         finalPNLFile << 0.0;
     }

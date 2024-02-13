@@ -81,7 +81,7 @@ void ADXStrategy(const vector<Record>& data, int start, double x, int n, double 
             position -= 1;
         }
 
-        cashflowFile << date << "," << cashInHand << "\n";
+        cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
 
         if ((orderStatistics.size() != 0) && (orderStatistics.back().direction != prev)) {
             orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
@@ -89,6 +89,6 @@ void ADXStrategy(const vector<Record>& data, int start, double x, int n, double 
 
     }
 
-    finalPNLFile << "Final PNL: " << cashInHand << "\n";
+    finalPNLFile << "Final PNL: " << fixed << setprecision(2) << cashInHand << "\n";
 
 }
