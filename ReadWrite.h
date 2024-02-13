@@ -48,6 +48,20 @@ string convert_to_date(const Record& a) {
     return oss.str();
 }
 
+string convert_to_tarik(int date) {
+    int year = date / 10000;
+    int month = (date / 100) % 100;
+    int day = date % 100;
+
+    ostringstream oss;
+
+    oss << setfill('0') << setw(2) << day << "/"
+                    << setfill('0') << setw(2) << month << "/"
+                    << year;
+
+    return oss.str();
+}
+
 
 int pos_start(const vector<Record>& data, int start_date){
     for(int i = 0; i < data.size(); ++i){

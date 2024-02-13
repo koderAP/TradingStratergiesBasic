@@ -10,6 +10,7 @@
 #include "LinearRegression.h"
 #include "Pairs.h"
 #include "PairsStopLoss.h"
+#include "BestStratergy.h"
 
 using namespace std;
 
@@ -328,7 +329,15 @@ int main(int argc, char *argv[]) {
 
 
 
-    } else {
+    } 
+    else if (command=="BEST_OF_ALL")
+    {
+        string symbol = argv[2];
+        string start_date = argv[3];
+        string end_date = argv[4];
+        bestStrategy(symbol, start_date, end_date);
+    }
+    else {
         cerr << "Invalid command: " << command << endl;
         return 1;
     }

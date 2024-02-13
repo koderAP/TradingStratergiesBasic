@@ -55,7 +55,7 @@ if all(arg in args for arg in required_args):
     symbol = args['symbol']
     start_date = args['start_date']
     end_date = args['end_date']
-    additional_days = int(args.get('n', 10)) 
+    additional_days = int(args.get('n', 100)) 
 else:
     print("Error: Missing required arguments.")
 

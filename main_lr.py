@@ -51,6 +51,7 @@ for key, value in os.environ.items():
 
 # Check if all required arguments are present
 required_args = ['symbol', 'train_start_date', 'train_end_date']
+print(args)
 if all(arg in args for arg in required_args):
     symbol = args['symbol']
     start_date = args['train_start_date']
