@@ -10,11 +10,10 @@ void ADXStrategy(const vector<Record>& data, int start, double x, int n, double 
     vector<double> di_minus;
     vector<double> dx;
     vector<double> adx;
-    vector<double> dm_atr;
 
 
 
-    for (int i = start - 2 * n; i < data.size(); ++i) {
+    for (int i = start; i < data.size(); ++i) {
         double tr_high_low = data[i].high - data[i].low;
         double tr_high_prev_close = data[i].high - data[i].price;
         double tr_low_prev_close = data[i].low - data[i - 1].price;
@@ -24,71 +23,75 @@ void ADXStrategy(const vector<Record>& data, int start, double x, int n, double 
         dm_minus.push_back(max(0.0, data[i].low - data[i - 1].low));
     }
 
-    for (int i = start - n; i < data.size(); ++i) {
-        double atr_temp = tr[i - n];
-        for (int j = n - 1; j >= 0; j--){
-            atr_temp = (1 / (n + 1)) * (tr[i - j] - atr_temp) + atr_temp;
+    atr.push_back(tr[0]);
+    double alpha = 2.0 / (n + 1);
+
+    for (int i = start + 1; i < data.size(); ++i) {
+        atr.push_back(alpha * (tr[i - start] - atr[i - start - 1]) + atr[i - start - 1]);
+    }
+
+    di_plus.push_back(dm_plus[0] / atr[0]);
+
+    for (int i = start + 1; i < data.size(); ++i) {
+        di_plus.push_back(alpha * ((dm_plus[i - start] / atr[i - start]) - di_plus[i - start - 1]) + di_plus[i - start - 1]);
+    }
+
+    di_minus.push_back(dm_minus[0] / atr[0]);
+
+    for (int i = start + 1; i < data.size(); ++i) {
+        di_minus.push_back(alpha * ((dm_minus[i - start] / atr[i - start]) - di_minus[i - start - 1]) + di_minus[i - start - 1]);
+    }
+
+
+    for (int i = 0; i < di_minus.size(); i++){
+        if (di_plus[i] + di_minus[i] == 0){
+            dx.push_back(1000000.0);
+            continue;
         }
-        atr.push_back(atr_temp);
+        dx.push_back((di_plus[i] - di_minus[i]) / (di_plus[i] + di_minus[i]) * 100);
+    }
+
+    adx.push_back(dx[0]);
+
+    for (int i = 1; i < dx.size(); ++i) {
+        if (dx[i] == 1000000.0){
+            adx.push_back(1000000.0);
+            continue;
+        }
+        adx.push_back(alpha * (dx[i] - adx[i - 1]) + adx[i - 1]);
     }
 
     for (int i = start; i < data.size(); ++i) {
-        double di_plus_temp = dm_plus[i - n] / atr[i - start];
-        for (int j = n - 1; j >= 0; --j){
-            di_plus_temp = (1 / (n + 1)) * (dm_plus[i - j] / atr[i - start + n - j] - di_plus_temp) + di_plus_temp;
-        }
-        di_plus.push_back(di_plus_temp);
-    }
-
-    for (int i = start; i < data.size(); ++i) {
-        double di_minus_temp = dm_minus[i - n] / atr[i - start];
-        for (int j = n - 1; j >= 0; --j){
-            di_minus_temp = (1 / (n + 1)) * (dm_minus[i - j] / atr[i - start + n - j] - di_minus_temp) + di_minus_temp;
-        }
-        di_minus.push_back(di_minus_temp);
-    }
-
-    for (int i = 0; i < di_plus.size(); ++i) {
-        double dx_temp = (di_plus[i] - di_minus[i]) * 100 / (di_plus[i] + di_minus[i]);
-        dx.push_back(dx_temp);
-    }
-
-    for (int i = start; i < data.size(); ++i) {
-        double adx_temp = dx[0];
-        for (int j = n - 1; j >= 0; --j){
-            adx_temp = (1 / (n + 1)) * (dx[i - j] - adx_temp) + adx_temp;
-        }
-        adx.push_back(adx_temp);
-    }
-
-    string prev = "wh";
-
-    for (int i = start; i < data.size(); ++i) {
-
-        if (orderStatistics.size() != 0){
-            prev = orderStatistics.back().direction;
-        }
 
         string date = convert_to_date(data[i]);
 
-        if (adx[i - start] > adx_threshold && position < x) {
+        if (adx[i - start] == 1000000.0){
+            cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
+            continue;
+        }
+
+        if (adx[i - start] >= adx_threshold && position < x) {
             orderStatistics.push_back({date, "BUY", 1, data[i].price});
             cashInHand -= data[i].price;  
-            position += 1;  
-        } else if (adx[i] < adx_threshold && position > -x) {
+            position += 1; 
+            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n"; 
+        } else if (adx[i - start] <= adx_threshold && position > -x) {
             orderStatistics.push_back({date, "SELL", 1, data[i].price});
             cashInHand += data[i].price; 
             position -= 1;
+            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         }
 
         cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
 
-        if ((orderStatistics.size() != 0) && (orderStatistics.back().direction != prev)) {
-            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
-        }
-
     }
 
-    finalPNLFile << "Final PNL: " << fixed << setprecision(2) << cashInHand << "\n";
-
+    if (position != 0) {
+        double finalPrice = data.back().price;
+        double pnl = position * finalPrice;
+        pnl += cashInHand;
+        finalPNLFile << fixed << setprecision(2) << pnl;
+    } else {
+        finalPNLFile << 0.0;
+    }
 }

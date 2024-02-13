@@ -8,36 +8,25 @@ void DMAPlusPlusStrategy(const vector<Record>& data, int start, double x, double
 
     double absPriceChangeSum = 0.0;
 
-    string prev = "wh";
-
-    for (size_t i = start - n + 1; i <= start; ++i) {
+    for (size_t i = start - n; i < start; ++i) {
         absPriceChangeSum += abs(data[i].price - data[i - 1].price);
     }
 
-    double closePrice = data[start].price;
-    double priceChange = closePrice - data[start - n].price;
 
-    if (absPriceChangeSum != 0) {
-        er.push_back(priceChange / absPriceChangeSum);
-    }
-    else {
-        er.push_back(1000000000.0);
-    }
-
-    for (size_t i = start + 1; i < data.size(); ++i){
+    for (size_t i = start; i < data.size(); ++i){
 
         absPriceChangeSum += abs(data[i].price - data[i-1].price);
         absPriceChangeSum -= abs(data[i-n].price - data[i-n-1].price);
 
-        closePrice = data[i].price;
+        double closePrice = data[i].price;
 
-        priceChange = closePrice - data[i - n].price;
+        double priceChange = closePrice - data[i - n].price;
 
         if (absPriceChangeSum != 0) {
             er.push_back(priceChange / absPriceChangeSum);
         }
         else {
-            er.push_back(1000000000.0);
+            er.push_back(100000000.0);
         }
     }
 
@@ -45,12 +34,12 @@ void DMAPlusPlusStrategy(const vector<Record>& data, int start, double x, double
 
     for (size_t i = start + 1; i < data.size(); ++i){
 
-        sf.push_back(sf[i - start - 1] + c1 * ((((2 * er[i - start]) / (1 + c2)) - 1)/(((2 * er[i - start]) / (1 + c2)) + 1) - sf[i - start - 1]));
+        if (er[i - start] == 100000000.0) {
+            sf.push_back(100000000.0);
+            continue;
+        }
 
-        double rsf = (1 - c1);
-        double asf = ((2 * er[i - start] - 1 - c2) / (2 * er[i - start] + 1 + c2));
-
-        sf.push_back((pow(rsf, (i - start))) * 0.5 + c1 * asf * (1 - pow(rsf, (i - start))) / (1 - rsf));
+        sf.push_back(sf[i - start - 1] + c1 * ((((2.0 * er[i - start]) / (1.0 + c2)) - 1.0)/(((2.0 * er[i - start]) / (1.0 + c2)) + 1.0) - sf[i - start - 1]));
 
     }    
 
@@ -59,39 +48,52 @@ void DMAPlusPlusStrategy(const vector<Record>& data, int start, double x, double
 
     for (size_t i = start + 1; i < data.size(); ++i){
 
+        if (sf[i - start] == 100000000.0){
+            ama.push_back(100000000.0);
+            continue;
+        }
+
         ama.push_back(ama[i - start - 1] + sf[i - start] * (data[i].price - ama[i - start - 1]));
 
     }
 
-    for (size_t i = 0; i < ama.size(); ++i){
+    int count = 0;
 
-        closePrice = data[i + start].price;
+    for (size_t i = start; i < data.size(); ++i){
 
-        if (orderStatistics.size() != 0){
-            prev = orderStatistics.back().direction;
+        double closePrice = data[i].price;
+
+        string date = convert_to_date(data[i]);
+
+        if (ama[i - start] == 100000000.0){
+            cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
+            continue;
         }
 
-        string date = convert_to_date(data[i + start]);
-
-        if (position != 0 && i - orderStatistics.back().quantity >= maxHoldDays) {
+        if (position != 0 && count >= maxHoldDays) {
             cashInHand += position * closePrice;
             orderStatistics.push_back({date, "FORCE_CLOSE", position, closePrice});
             position = 0;
+            count = 0;
+            orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         }
 
-        if (closePrice > (ama[i] * (1 + p / 100)) && position < x) {
+        if (closePrice > (ama[i - start] * (1 + p / 100)) && position < x) {
             orderStatistics.push_back({date, "BUY", 1, closePrice});
             cashInHand -= closePrice;
             position += 1;
             orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
-        } else if (closePrice < (ama[i] * (1 - p / 100)) && position > -x) {
+        } else if (closePrice < (ama[i - start] * (1 - p / 100)) && position > -x) {
             orderStatistics.push_back({date, "SELL", 1, closePrice});
             cashInHand += closePrice;
             position -= 1;
             orderStatisticsFile << orderStatistics.back().date << "," << orderStatistics.back().direction << "," << orderStatistics.back().quantity << "," << orderStatistics.back().price << "\n";
         }
+        else {
+            count++;
+        }
 
-        cashflowFile << date << "," << cashInHand << "\n";
+        cashflowFile << date << "," << fixed << setprecision(2) << cashInHand << "\n";
 
     }
 
@@ -99,7 +101,7 @@ void DMAPlusPlusStrategy(const vector<Record>& data, int start, double x, double
         double finalPrice = data.back().price;
         double pnl = position * finalPrice;
         pnl += cashInHand;
-        finalPNLFile << pnl;
+        finalPNLFile << fixed << setprecision(2) << pnl;
     } else {
         finalPNLFile << 0.0;
     }
