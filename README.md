@@ -161,7 +161,9 @@ In the "Best of All" strategy, we aim to find the strategy that yields the best 
 
 To run this strategy, use the following command:
 
-`make strategy="BEST_OF_ALL" symbol=SBIN start_date="a" end_date="b"`
+```
+make strategy="BEST_OF_ALL" symbol=SBIN start_date="a" end_date="b"
+```
 
 # Mean-Reverting Pairs Trading Strategy
 
@@ -200,7 +202,9 @@ Incorporates a stop-loss mechanism based on the z-score crossing the stop_loss_t
 
 To run this strategy with stop-loss, use the following command:
 
-`make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 stop_loss_threshold=4 start_date="a" end_date="b"`
+```
+make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 stop_loss_threshold=4 start_date="a" end_date="b"
+```
 
 # Algorithmic Trading Strategies Report
 
