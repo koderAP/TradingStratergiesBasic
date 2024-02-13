@@ -2,7 +2,7 @@
 
 ## Background
 
-Before diving into the implementation of trading strategies, let's familiarize ourselves with some key concepts:
+Before diving into our implementation of trading strategies, let's familiarize ourselves with some key concepts used:
 
 - **Position**: The quantity of shares held by a trader. It can be long (buy) or short (sell).
 - **Price Series**: A sequence of prices of a stock over a period of time.
@@ -11,7 +11,7 @@ Before diving into the implementation of trading strategies, let's familiarize o
 
 ## Constraints and Assumptions
 
-Throughout this assignment, we make the following assumptions:
+Throughout this assignment, we have made the following assumptions:
 
 - We only consider the closing price of stocks for analysis, unless specified otherwise.
 - Short-selling of stocks is allowed.
@@ -197,8 +197,7 @@ make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 start_dat
 
 Incorporates a stop-loss mechanism based on the z-score crossing the stop_loss_threshold.
 
-- Given stop_loss_threshold, close the position when the z-score crosses the threshold.
-- Use the same mean and standard deviation used to open the position to calculate the z-score.
+- Given stop_loss_threshold, closes the position when the z-score crosses the threshold.
 
 To run this strategy with stop-loss, use the following command:
 
@@ -208,13 +207,10 @@ make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 stop_loss
 
 # Algorithmic Trading Strategies Report
 
-In this report, we analyze the performance of various algorithmic trading strategies implemented and backtested on historical stock data. Each strategy aims to generate buy or sell signals based on specific market conditions and indicators.
+We analyzed the performance of various algorithmic trading strategies implemented and backtested on historical stock data. Each strategy aims to generate buy or sell signals based on specific market conditions and indicators.
 
 # Algorithmic Trading Strategies
 
-In this subtask, we implemented various trading strategies and backtested them on historical data. Each strategy aims to generate buy or sell signals based on specific conditions observed in the price series of a stock. We covered momentum-based strategies, trend-based strategies, strategies using technical indicators, linear regression strategy, and mean-reverting pairs trading strategy.
-
-## Key Insights
 
 ### Momentum-Based Strategies
 
@@ -250,4 +246,71 @@ In this subtask, we implemented various trading strategies and backtested them o
 - Requires careful parameter selection and risk management
 - Stop-loss mechanisms enhance risk-adjusted returns
 
-These insights offer a concise overview of each strategy's performance, characteristics, and considerations for improvement.
+# Test Cases
+```
+make strategy=BASIC symbol=SBIN n=5 x=2 start_date="01/01/2023" end_date="01/01/2024"
+```
+- PnL = 1.15
+
+```
+make strategy=DMA
+ symbol=SBIN n=50 x=3 p=2 start_date="01/01/2023" end_date="01/01/2024"
+```
+- PnL = -30.50
+
+```
+make strategy="DMA++" symbol=SBIN x=4 p=5 n=14 max_hold_days=28 c1=0.2 c2=2 start_date="01/01/2023" end_date="01/01/2024"
+```
+
+- PnL = -191.15
+
+```
+make strategy="DMA++" symbol=SBIN x=4 p=5 n=14 max_hold_days=28 c1=0.2 c2=2 start_date="01/07/2023" end_date="01/01/2024"
+```
+
+- PnL = 161.85
+
+```
+make strategy=MACD symbol=SBIN x=3 start_date="01/01/2023" end_date="01/01/2024"
+```
+- PnL = 127.05
+
+```
+make strategy=RSI symbol=SBIN x=3 n=14 oversold_threshold=30 overbought_threshold=70 start_date="01/01/2023" end_date="01/01/2024"
+```
+
+- PnL = 34.20
+```
+make strategy=ADX symbol=SBIN x=3 n=14 adx_threshold=25 start_date="01/01/2023" end_date="01/01/2024"
+```
+
+- PnL = -264.40
+
+```
+make strategy="LINEAR_REGRESSION" symbol=SBIN x=3 p=2 train_start_date="01/01/2022" train_end_date="01/01/2023" start_date="01/01/2023" end_date="01/01/2024"
+```
+
+- PnL = -4.75
+
+```
+make strategy="BONUS" symbol=SBIN x=3 p=2 train_start_date="01/01/2022" train_end_date="01/01/2023" start_date="01/01/2023" end_date="01/01/2024"
+```
+
+- PnL = 178.70
+```
+
+make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 start_date="01/01/2023" end_date="01/01/2024"
+```
+
+- PnL = -3528.90
+
+
+### CONCLUSION
+
+- The "Best of All" strategy is the most effective, combining multiple strategies for diversification and risk mitigation.
+- The Mean-Reverting Pairs Trading Strategy can be profitable with careful parameter selection and risk management.
+- The Linear Regression Strategy can be effective in certain market conditions, but may struggle in volatile markets.
+- Momentum-based strategies are effective in trending markets, while indicator-based strategies are useful for identifying overbought and oversold conditions.
+- The performance of each strategy varies with market conditions, emphasizing the importance of adaptability and risk management.
+- The BONUS implementation is the most profitable among all strategies, with a PnL of 178.70 in these set of test cases, but also stand among the top 3 in terms of PnL in other cases too.
+- DMA++ strategy is benififcial only for small time frames, as it has a PnL of 161.85 in the second test case, but has a PnL of -191.15 in the first test case.

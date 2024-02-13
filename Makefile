@@ -37,6 +37,11 @@ else ifeq ($(strategy), LINEAR_REGRESSION)
 	@python3 $(PYTHON_SCRIPT_test) symbol=$(symbol) n=$(n) train_start_date=$(train_start_date) train_end_date=$(train_end_date)
 	@g++ -o test main.cpp
 	@./test LINEAR_REGRESSION $(symbol) $(x) $(p) $(train_start_date) $(train_end_date) $(start_date) $(end_date)
+else ifeq ($(strategy), BONUS)
+	@python3 $(PYTHON_SCRIPT) symbol=$(symbol) n=$(n) start_date=$(start_date) end_date=$(end_date)
+	@python3 $(PYTHON_SCRIPT_test) symbol=$(symbol) n=$(n) train_start_date=$(train_start_date) train_end_date=$(train_end_date)
+	@g++ -o test main.cpp
+	@./test BONUS $(symbol) $(x) $(p) $(train_start_date) $(train_end_date) $(start_date) $(end_date)
 
 else ifeq ($(strategy), PAIRS)
 	@python3 $(PYTHON_SCRIPT1) symbol1=$(symbol1) symbol2=$(symbol2) x=$(x) n=$(n) threshold=$(threshold) stop_loss_threshold=$(stop_loss_threshold) start_date=$(start_date) end_date=$(end_date)

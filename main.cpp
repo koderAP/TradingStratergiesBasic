@@ -3,7 +3,8 @@
 #include "ReadWrite.h"
 #include "BasicStrategy.h"
 #include "DMA.h"
-#include "dma++.h"
+#include "DMA++.h"
+#include "Bonus.h"
 #include "MACD.h"
 #include "RSI.h"
 #include "ADX.h"
@@ -268,8 +269,46 @@ int main(int argc, char *argv[]) {
 
         LinearRegressionStrategy(symbol, inputDatatrain, inputData, x, p, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile, date_pos, date_pos_train);
 
+    } else if(command == "BONUS"){
+
+        cout << "Executing LINEAR_REGRESSION_BONUS strategy" << endl;
+        string symbol = argv[2];
+        int x = stoi(argv[3]);
+        int p = stoi(argv[4]);
+        string train_start_date = argv[5];
+        string train_end_date = argv[6];
+        string start_date = argv[7];
+        string end_date = argv[8];
+
+        string binaryFilePath = symbol +".bin";
+        string cashflowFilePath = "daily_cashflow.csv";
+        string orderStatisticsFilePath = "order_statistics.csv";
+        string finalPNLFilePath = "final_pnl.txt";
+
+        vector<Record> inputData = readBinary(binaryFilePath);
+
+        vector<Order> orderStatistics;
+        ofstream cashflowFile(cashflowFilePath);
+        ofstream orderStatisticsFile(orderStatisticsFilePath);
+        ofstream finalPNLFile(finalPNLFilePath);
+
+        cashflowFile << "Date" << "," << "Cashflow" << "\n";
+        orderStatisticsFile << "Date" << "," << "Order_dir" << "," << "Quantity" << "," << "Price" << "\n";
+
+        
+
+        int startDateInt = converet_to_int(start_date);
+        int date_pos = pos_start(inputData, startDateInt);
+        int startDateInt_train = converet_to_int(train_start_date);
+        string filenem = symbol + "_train.bin"; 
+        vector<Record> inputDatatrain = readBinary(filenem);
+        int date_pos_train = pos_start(inputDatatrain, startDateInt_train);
+        cout<<train_end_date<<"**"<<date_pos_train<<"##"<<startDateInt_train<<endl;
+
+        BonusStratergy(symbol, inputDatatrain, inputData, x, p, orderStatistics, cashflowFile, orderStatisticsFile, finalPNLFile, date_pos, date_pos_train);
+
     } else if (command == "PAIRS") {
-    cout << "Executing Pairs Stop loss strategy" << endl;
+    
 
         string symbol1 = argv[2];
         string symbol2 = argv[3];
@@ -281,11 +320,13 @@ int main(int argc, char *argv[]) {
         string start_date;
         string end_date;
         if (argc > 9) {
+            cout << "Executing Pairs Stop loss strategy" << endl;
             stop_loss_threshold = stoi(argv[7]);
             start_date = argv[8];
             end_date = argv[9];
         }
         else {
+            cout << "Executing Pairs strategy" << endl;
             start_date = argv[7];
             end_date = argv[8];
         }
