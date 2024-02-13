@@ -40,9 +40,11 @@ Throughout this assignment, we make the following assumptions:
 - `x`: Maximum position allowed.
 - `p`: Standard deviation threshold.
 
-#### Implementation
+#### Implementation:
 
-`make strategy=DMA symbol=SBIN n=50 x=3 p=2 start_date="a" end_date="b"`
+```
+make strategy=DMA symbol=SBIN n=50 x=3 p=2 start_date="a" end_date="b"
+```
 
 
 ### 1.3 Improving DMA
@@ -55,9 +57,11 @@ Throughout this assignment, we make the following assumptions:
 - `max hold days`: Maximum number of days positions can be held.
 - `c1`, `c2`: Smoothing factor parameters.
 
-#### Implementation
+#### Implementation:
 
-`make strategy="DMA++" symbol=SBIN x=4 p=5 n=14 max_hold_days=28 c1=2 c2=0.2 start_date="a" end_date="b"`
+```
+make strategy="DMA++" symbol=SBIN x=4 p=5 n=14 max_hold_days=28 c1=2 c2=0.2 start_date="a" end_date="b"
+```
 
 
 ### 1.4 Using Indicators
@@ -67,9 +71,11 @@ Throughout this assignment, we make the following assumptions:
 #### Parameters
 - `x`: Maximum position allowed.
 
-#### Implementation
+#### Implementation:
 
-`make strategy=MACD symbol=SBIN x=3 start_date="a" end_date="b"`
+```
+make strategy=MACD symbol=SBIN x=3 start_date="a" end_date="b"
+```
 
 
 #### 1.4.2 Relative Strength Index (RSI)
@@ -79,9 +85,11 @@ Throughout this assignment, we make the following assumptions:
 - `n`: Number of past days for calculating average gain and loss.
 - `oversold_threshold`, `overbought_threshold`: RSI threshold values.
 
-#### Implementation
+#### Implementation:
 
-`make strategy=RSI symbol=SBIN x=3 n=14 oversold_threshold=30 overbought_threshold=70 start_date="a" end_date="b"`
+```
+make strategy=RSI symbol=SBIN x=3 n=14 oversold_threshold=30 overbought_threshold=70 start_date="a" end_date="b"
+```
 
 
 #### 1.4.3 Average Directional Index (ADX)
@@ -91,9 +99,11 @@ Throughout this assignment, we make the following assumptions:
 - `n`: Number of past days for calculating TR, DM, and ATR.
 - `adx_threshold`: ADX threshold value.
 
-#### Implementation
+#### Implementation:
 
-`make strategy=ADX symbol=SBIN x=3 n=14 adx_threshold=25 start_date="a" end_date="b"`
+```
+make strategy=ADX symbol=SBIN x=3 n=14 adx_threshold=25 start_date="a" end_date="b"
+```
 
 
 # Linear Regression Strategy
@@ -127,11 +137,13 @@ If the predicted price is higher than the actual price, we expect the actual pri
 - `train_start_date`, `train_end_date`: The dates for training the Linear Regression model.
 - `p`: The percent difference required for making trading decisions.
 
-## Implementation
+## Implementation:
 
 To run this strategy, use the following command:
 
-`make strategy="LINEAR_REGRESSION" symbol=SBIN x=3 p=2 train_start_date="a" train_end_date="b" start_date="c" end_date="d"`
+```
+make strategy="LINEAR_REGRESSION" symbol=SBIN x=3 p=2 train_start_date="a" train_end_date="b" start_date="c" end_date="d"
+```
 
 # Best of All Strategy
 
@@ -173,7 +185,9 @@ The strategy relies on the mean-reverting behavior of the spread between the two
 
 To run this strategy, use the following command:
 
-`make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 start_date="a" end_date="b"`
+```
+make strategy=PAIRS symbol1=SBIN symbol2=ADANIENT x=5 n=20 threshold=2 start_date="a" end_date="b"
+```
 
 ## Additional Features
 
